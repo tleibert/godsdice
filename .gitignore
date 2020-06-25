@@ -1,3 +1,5 @@
+# for the mac users
 .DS_Store/
 
+# for cleanliness
 __pycache__/
