@@ -10,10 +10,12 @@ import scipy.linalg as la
 # %% codecell
 # make a unitary gate
 
+# random hermitian matrix
 ham = np.matrix(np.random.random((4,4)))
 ham = ham + ham.H
+# make its unitary
 unit_mat = np.matrix(la.expm(1j*ham))
-
+# unitary gate object
 unit_gate = UnitaryGate(unit_mat, label='test')
 
 # %% codecell
@@ -32,6 +34,7 @@ qc = QuantumCircuit(q,c)
 
 qc.h(1)
 qc.x(2)
+# add on subcircuit from unitary
 qc.append(testckt, [0,1])
 qc.measure([0,1,2,3], [0,1,2,3])
 
