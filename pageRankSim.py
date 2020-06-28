@@ -18,12 +18,16 @@ unit_mat = np.matrix(la.expm(1j*ham))
 # unitary gate object
 unit_gate = UnitaryGate(unit_mat, label='test')
 
-# %% codecell
-# make a circuit with this gate
+########################
+# I don't think this block works, but it may be useful ClassicalRegister
+########################
 
-testckt=unit_gate.definition
-testckt.name = 'test'
-testckt.draw(output='text')
+# # %% codecell
+# # make a circuit with this gate
+#
+# testckt=unit_gate.definition
+# testckt.name = 'test'
+# testckt.draw(output='text')
 
 # %% codecell
 # setup circuit
@@ -35,7 +39,7 @@ qc = QuantumCircuit(q,c)
 qc.h(1)
 qc.x(2)
 # add on subcircuit from unitary
-qc.append(testckt, [0,1])
+qc.append(unit_gate, [0,1])
 qc.measure([0,1,2,3], [0,1,2,3])
 
 # draw circuit
