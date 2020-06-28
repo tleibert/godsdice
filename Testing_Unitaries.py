@@ -4,6 +4,7 @@ Created on Sat Jun 27 17:15:34 2020
 
 @author: Thoma
 """
+
 # %% codecell
 # imports
 import numpy as np
