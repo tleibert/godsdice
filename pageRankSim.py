@@ -49,9 +49,11 @@ s_gate = UnitaryGate(S)
 
 # I'm running this for an absurdly long time
 
+# initialize to superposition without |up>|111> or |down>|111>
 init_vector = np.ones(16)/np.sqrt(14)
 init_vector[7] = init_vector[15] = 0
 
+# run the circuits for many timesteps and average the results
 runs = [10*i + 50 for i in range(46)]
 counts = {'000':0,'001':0,'010':0,'011':0,'100':0,'101':0,'110':0,'111':0}
 for run in runs:
