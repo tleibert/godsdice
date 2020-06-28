@@ -13,12 +13,6 @@ import Testing_Unitaries
 # make a unitary gate
 
 A = np.array([[0,1,0,0,1,1,0,0],[0,0,0,0,0,0,0,0],[1,1,0,0,0,0,1,0],[0,0,1,0,1,1,0,0],[0,0,0,0,0,0,1,0],[0,0,0,1,0,0,0,0],[0,0,0,0,0,1,0,0],[0,0,0,0,0,0,0,0]])
-# A = A.T
-PDQ = la.svd(A)
-P = PDQ[0]
-D = np.diag(PDQ[1])
-Q = PDQ[2]
-U = P @ la.expm(1j*D) @ Q
 
 #Finding C
 C = Testing_Unitaries.constructC(A)
@@ -26,13 +20,13 @@ C = np.matrix(C)
 
 c_gate = UnitaryGate(C)
 
-S = Testing_Unitaries.constructS(A,U)
+S = Testing_Unitaries.constructS(A)
 S = np.matrix(S)
 
 s_gate = UnitaryGate(S)
 
 ########################
-# I don't think this block works, but it may be useful ClassicalRegister
+# I don't think this block works, but it may be useful later
 ########################
 
 # # %% codecell
