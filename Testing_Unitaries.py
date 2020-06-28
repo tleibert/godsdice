@@ -47,7 +47,7 @@ def constructC(M):
 
     for x in range(M.shape[0]):
 
-        xVec = np.zeros(A.shape[0])
+        xVec = np.zeros(M.shape[0])
         xVec[x] = 1
         outerX = np.diag(xVec)
 
