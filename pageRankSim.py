@@ -10,8 +10,8 @@ import scipy.linalg as la
 import Testing_Unitaries
 
 # %% codecell
-# make a unitary gate
 
+# adjacency matrix
 A = np.array([  [0,1,0,0,1,1,0,0],
                 [0,0,0,0,0,0,0,0],
                 [1,1,0,0,0,0,1,0],
@@ -21,14 +21,14 @@ A = np.array([  [0,1,0,0,1,1,0,0],
                 [0,0,0,0,0,1,0,0],
                 [0,0,0,0,0,0,0,0]])
 
-#Finding C
+# make C and S operators
 C = Testing_Unitaries.constructC(A)
-C = np.matrix(C)
+# C = np.matrix(C)
 
 c_gate = UnitaryGate(C)
 
 S = Testing_Unitaries.constructS(A)
-S = np.matrix(S)
+# S = np.matrix(S)
 
 s_gate = UnitaryGate(S)
 
@@ -42,11 +42,17 @@ s_gate = UnitaryGate(S)
 # testckt=unit_gate.definition
 # testckt.name = 'test'
 # testckt.draw(output='text')
+########################
 
 # %% codecell
-# setup circuit
+# run circuit
 
-runs = [5*i + 50 for i in range(31)]
+# I'm running this for an absurdly long time
+
+init_vector = np.ones(16)/np.sqrt(14)
+init_vector[7] = init_vector[15] = 0
+
+runs = [10*i + 50 for i in range(46)]
 counts = {'000':0,'001':0,'010':0,'011':0,'100':0,'101':0,'110':0,'111':0}
 for run in runs:
 
@@ -54,7 +60,8 @@ for run in runs:
     c = ClassicalRegister(3)
     qc = QuantumCircuit(q,c)
 
-    qc.h([0,1,2])
+    qc.initialize(init_vector, [0,1,2,3])
+
     for i in range(run):
         qc.append(c_gate, [0,1,2,3])
         qc.append(s_gate, [0,1,2,3])
@@ -62,7 +69,7 @@ for run in runs:
     qc.measure([0,1,2], [0,1,2])
 
     simulator = Aer.get_backend("qasm_simulator")
-    job = execute(qc, simulator, shots=1000)
+    job = execute(qc, simulator, shots=5000)
     result = job.result()
     counts_run = result.get_counts(qc)
     for key in counts_run.keys():
