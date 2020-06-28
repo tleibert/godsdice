@@ -75,7 +75,6 @@ for run in runs:
         rank[key] += counts_run[key]
 
 # normalize & plot quantum rank
-rank = rank/sum(rank.values())
 plot_histogram(rank)
 
 # %% codecell
