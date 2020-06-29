@@ -67,7 +67,7 @@ def constructS(M):
     down_proj = np.diag([0,1])
 
     P,D,Q = la.svd(M)
-    U = P @ scila.expm(1j*np.diag(D)) @ Q
+    U = P @ scila.expm(1j*np.diag(D)) @ Q.T.conj()
 
     if_up = np.kron(up_proj, np.identity(M.shape[0]))
     if_down = np.kron(down_proj, U)

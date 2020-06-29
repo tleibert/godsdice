@@ -25,6 +25,7 @@ A = np.array([  [0,1,0,0,1,1,0,0],
                 [0,0,0,0,0,1,0,0],
                 [0,0,0,0,0,0,0,0]])
 
+# flip rows & columns of A
 A[:,[0,7]] = A[:,[7,0]]
 A[:,[1,6]] = A[:,[6,1]]
 A[:,[2,5]] = A[:,[5,2]]
@@ -34,8 +35,6 @@ A[[0,7],:] = A[[7,0],:]
 A[[1,6],:] = A[[6,1],:]
 A[[2,5],:] = A[[5,2],:]
 A[[3,4],:] = A[[4,3],:]
-
-A
 
 # number of qubits needed for graph
 n_qubits = int(np.log2(A.shape[0]))
@@ -51,8 +50,8 @@ s_gate = UnitaryGate(S)
 # run circuit
 
 # initialize to superposition without |up>|111> or |down>|111>
-init_vector = np.ones(16)/np.sqrt(14)
-init_vector[7] = init_vector[15] = 0
+init_vector = np.ones(16)/np.sqrt(16)
+# init_vector[7] = init_vector[15] = 0
 
 # run the circuits for many timesteps and average the results
 # the paper started at 50 and ran up to 200-500, depending on the size of the
@@ -61,7 +60,7 @@ init_vector[7] = init_vector[15] = 0
 runs = [10*i + 50 for i in range(16)]
 runs
 # all the probabilities are added up here to yield the quantum rank
-rank = {'000':0,'001':0,'010':0,'011':0,'100':0,'101':0,'110':0}
+rank = {'000':0,'001':0,'010':0,'011':0,'100':0,'101':0,'110':0,'111':0}
 for run in runs:
 
     # initialize qc
