@@ -32,8 +32,14 @@ n_qubits = int(np.log2(A.shape[0]))
 C = Testing_Unitaries.constructC(A)
 c_gate = UnitaryGate(C)
 
+plt.matshow(np.real(C))
+
 S = Testing_Unitaries.constructS(A)
 s_gate = UnitaryGate(S)
+
+fig,ax = plt.subplots(1,2)
+ax[0].matshow(np.real(S))
+ax[1].matshow(np.imag(S))
 
 # %% codecell
 # run circuit
