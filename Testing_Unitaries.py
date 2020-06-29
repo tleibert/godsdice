@@ -53,7 +53,7 @@ def constructC(M):
 
         a = aVal(M,x)
         cellElement = np.array([[np.sqrt(1/(a + 1)),np.sqrt(a/(1 + a))],[np.sqrt(a/(1 + a)),-1 * np.sqrt(1/(a + 1))]])
-        output += kron(cellElement,outerX)
+        output = output + kron(cellElement,outerX)
 
     return output
 
