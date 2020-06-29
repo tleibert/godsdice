@@ -15,7 +15,6 @@ from numpy import kron
 
 from qiskit.visualization import plot_histogram
 
-
 # %% codecell
 # setup functions
 
@@ -76,6 +75,7 @@ def constructS(M):
     S = if_up+if_down
 
     return S
+
 def returnU(M):
     # Force input matrix to already have dimensions as a power of 2
     if not np.isclose(np.log2(M.shape[0]), int(np.log2(M.shape[0]))):
@@ -87,48 +87,56 @@ def returnU(M):
     P,D,Q = la.svd(M)
     U = P @ scila.expm(1j*np.diag(D)) @ Q
     return U
+
 def manualSVD(M):
     leftMatrix = M @ M.conjugate()
     rightMatrix = M.conjugate() @ M
     rightEigVal, rightEigVec = scila.eig(rightMatrix,None, False, True)
+    # is this right? with M instead of leftMatrix
     leftEigVal, leftEigVec = scila.eig(M,None, True, False)
     return(leftEigVec,leftEigVal,rightEigVal,rightEigVec)
 
 # %% codecell
 # #For the test case:
-A = np.array([[0,1,0,0,1,1,1,0],[0,0,0,0,0,0,0,0],[1,1,0,0,0,0,1,0],[0,0,1,0,1,1,0,0],[0,0,0,0,0,0,1,0],[0,0,1,0,0,0,0,0],[0,0,0,0,1,0,0,0],[0,0,0,0,0,0,0,0]])
+A = np.array([  [0,1,0,0,1,1,1,0],
+                [0,0,0,0,0,0,0,0],
+                [1,1,0,0,0,0,1,0],
+                [0,0,1,0,1,1,0,0],
+                [0,0,0,0,0,0,1,0],
+                [0,0,1,0,0,0,0,0],
+                [0,0,0,0,1,0,0,0],
+                [0,0,0,0,0,0,0,0]])
 
-counts = {'000':0,'001':0,'010':0,'011':0,'100':0,'101':0,'110':0,'111':0}
-zero = np.array([1,0])
+# initialize statevector, operators
 C = constructC(A)
 S = constructS(A)
-H = 1/np.sqrt(2) * np.array([[1,1,],[1,-1]])
+SC = S @ C
+
 initialState = np.zeros(8)
 active_nodes = 7
+
 for i in range(active_nodes):
     initialState[i] = 1/np.sqrt(active_nodes)
 
-psio = kron(H@zero,initialState)
-SC = S @ C
+psio = kron(np.array([1,1]),initialState)/np.sqrt(2)
 
-P,D,Q = la.svd(A)
-
-
-
-
-
-#Test = np.array([[1,2],[3,4]])
-
-
-finalList = [SC@psio]
+# %% codecell
+# run the circuit - get SV after one step, then take one more step, etc.
+finalStates = [SC@psio]
 for i in range(100):
-    finalList.append(SC @ finalList[i])
+    finalStates.append(SC @ finalStates[i])
+
+# find probabilities (instantaneous rank) after each step
 probabilityList = []
-for item in range(len(finalList)):
-    probabilities = [p * np.conj(p) for p in finalList[item]]
+for item in range(len(finalStates)):
+    probabilities = [np.real(p * np.conj(p)) for p in finalStates[item]]
     probabilityList.append(probabilities)
+
+# combine instantaneous ranks into final average rank
+counts = {'000':0,'001':0,'010':0,'011':0,'100':0,'101':0,'110':0,'111':0}
 for item in probabilityList:
     for i in range(len(item)):
+        # figures out the binary label that qiskit would return
         binI = bin(i)[2:].zfill(4)[1:]
         counts[binI] += item[i]
 
