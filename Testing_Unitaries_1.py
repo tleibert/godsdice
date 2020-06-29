@@ -11,9 +11,8 @@ import math
 import numpy.linalg as la
 import scipy.linalg as scila
 from numpy import kron
-
-
 from qiskit.visualization import plot_histogram
+import matplotlib.pyplot as plt
 
 # %% codecell
 # setup functions
@@ -22,10 +21,7 @@ from qiskit.visualization import plot_histogram
 
 def indegrees(M,node):
     #This is the sum of the colume at node X, counting from 0
-    sumCurrent = 0
-    for index in range(0,M.shape[0]):
-        sumCurrent += M[index][node]
-    return sumCurrent
+    return sum(M[:,node])
 
 def outdegrees(M,node):
     #Counts the entries in the node row
@@ -54,7 +50,9 @@ def constructC(M):
         outerX = np.diag(xVec)
 
         a = aVal(M,x)
-        cellElement = np.array([[np.sqrt(1/(a + 1)),np.sqrt(a/(1 + a))],[np.sqrt(a/(1 + a)),-1 * np.sqrt(1/(a + 1))]])
+        cellElement = np.array([[np.sqrt(1/(a + 1)),np.sqrt(a/(1 + a))],
+                                [np.sqrt(a/(1 + a)),-1 * np.sqrt(1/(a + 1))]
+                                ])
         output += kron(cellElement,outerX)
 
     return output
@@ -96,24 +94,40 @@ def manualSVD(M):
     leftEigVal, leftEigVec = scila.eig(M,None, True, False)
     return(leftEigVec,leftEigVal,rightEigVal,rightEigVec)
 
+# adjacency matrix for binary trees
+def binaryTree(levels):
+    n_nodes = 2**(levels+1)
+    # final node recieving a connection
+    n_final = 2**levels - 1
+
+    adj_mat = np.zeros([n_nodes, n_nodes])
+    for j in range(n_final):
+        adj_mat[2*j+1, j] = adj_mat[2*j+2, j] = 1
+
+    return adj_mat
+
 # %% codecell
-# #For the test case:
-A = np.array([  [0,1,0,0,1,1,1,0],
-                [0,0,0,0,0,0,0,0],
-                [1,1,0,0,0,0,1,0],
-                [0,0,1,0,1,1,0,0],
-                [0,0,0,0,0,0,1,0],
-                [0,0,1,0,0,0,0,0],
-                [0,0,0,0,1,0,0,0],
-                [0,0,0,0,0,0,0,0]])
+# # 7-node graph from paper
+# A = np.array([  [0,1,0,0,1,1,1,0],
+#                 [0,0,0,0,0,0,0,0],
+#                 [1,1,0,0,0,0,1,0],
+#                 [0,0,1,0,1,1,0,0],
+#                 [0,0,0,0,0,0,1,0],
+#                 [0,0,1,0,0,0,0,0],
+#                 [0,0,0,0,1,0,0,0],
+#                 [0,0,0,0,0,0,0,0]])
+
+# 5-level binary tree
+
+A = binaryTree(5)
 
 # initialize statevector, operators
 C = constructC(A)
 S = constructS(A)
 SC = S @ C
 
-initialState = np.zeros(8)
-active_nodes = 7
+initialState = np.zeros(64)
+active_nodes = 63
 
 for i in range(active_nodes):
     initialState[i] = 1/np.sqrt(active_nodes)
@@ -123,7 +137,7 @@ psio = kron(np.array([1,1]),initialState)/np.sqrt(2)
 # %% codecell
 # run the circuit - get SV after one step, then take one more step, etc.
 finalStates = [SC@psio]
-for i in range(100):
+for i in range(500):
     finalStates.append(SC @ finalStates[i])
 
 # find probabilities (instantaneous rank) after each step
@@ -133,11 +147,15 @@ for item in range(len(finalStates)):
     probabilityList.append(probabilities)
 
 # combine instantaneous ranks into final average rank
-counts = {'000':0,'001':0,'010':0,'011':0,'100':0,'101':0,'110':0,'111':0}
+# creates as many dictionary slots as we need
+counts = {}
+for i in range(2**6):
+    counts[bin(i)[2:].zfill(6)] = 0
+
 for item in probabilityList:
     for i in range(len(item)):
         # figures out the binary label that qiskit would return
-        binI = bin(i)[2:].zfill(4)[1:]
+        binI = bin(i)[2:].zfill(7)[1:]
         counts[binI] += item[i]
 
 plot_histogram(counts)
