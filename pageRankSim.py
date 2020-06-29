@@ -46,7 +46,8 @@ init_vector[7] = init_vector[15] = 0
 # the paper started at 50 and ran up to 200-500, depending on the size of the
 # graph
 # I'm doing it in steps of 10
-runs = [10*i + 50 for i in range(46)]
+runs = [10*i + 50 for i in range(16)]
+runs
 # all the probabilities are added up here to yield the quantum rank
 rank = {'000':0,'001':0,'010':0,'011':0,'100':0,'101':0,'110':0}
 for run in runs:
