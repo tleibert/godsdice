@@ -84,6 +84,8 @@ for run in runs:
 # normalize & plot quantum rank
 plot_histogram(rank)
 
+import qiskit
+qiskit.__qiskit_version__
 # %% codecell
 ############################
 # DECOMPOSING UNITARY NOT WORKING

@@ -152,7 +152,7 @@ counts = {}
 for i in range(2**6):
     counts[bin(i)[2:].zfill(6)] = 0
 
-for item in probabilityList:
+for item in probabilityList[50:]:
     for i in range(len(item)):
         # figures out the binary label that qiskit would return
         binI = bin(i)[2:].zfill(7)[1:]
