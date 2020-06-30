@@ -75,6 +75,34 @@ def constructS(M):
 
     return S
 
+# adjacency matrix for binary trees
+def binaryTree(levels):
+    n_nodes = 2**(levels+1)
+    # final node recieving a connection
+    n_final = 2**levels - 1
+
+    adj_mat = np.zeros([n_nodes, n_nodes])
+    for j in range(n_final):
+        adj_mat[2*j+1, j] = adj_mat[2*j+2, j] = 1
+
+    return adj_mat
+
+# adjacency matrix for scale-free network
+def scaleFree(nodes):
+    adj_mat = np.zeros([nodes,nodes])
+
+    adj_mat[0,0]=1
+
+    for node in range(1,nodes):
+        probs = np.array([sum(adj_mat[i,:])+sum(adj_mat[:,i]) for i in range(node)])
+        if not sum(probs) == 0:
+            probs = probs/sum(probs)
+
+        for join in range(node):
+            if np.random.random() < probs[join]:
+                adj_mat[node, join] = 1
+    return adj_mat
+
 # # %% codecell
 # #For the test case:
 # A = np.array([  [0,1,0,0,1,1,0,0],

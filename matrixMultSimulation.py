@@ -106,6 +106,22 @@ def binaryTree(levels):
 
     return adj_mat
 
+# adjacency matrix for scale-free network
+def scaleFree(nodes):
+    adj_mat = np.zeros([nodes,nodes])
+
+    adj_mat[0,0]=1
+
+    for node in range(1,nodes):
+        probs = np.array([sum(adj_mat[i,:])+sum(adj_mat[:,i]) for i in range(node)])
+        if not sum(probs) == 0:
+            probs = probs/sum(probs)
+
+        for join in range(node):
+            if np.random.random() < probs[join]:
+                adj_mat[node, join] = 1
+    return adj_mat
+
 # %% codecell
 # # 7-node graph from paper
 # A = np.array([  [0,1,0,0,1,1,1,0],
@@ -119,15 +135,18 @@ def binaryTree(levels):
 
 # 5-level binary tree
 
-A = binaryTree(5)
+# A = binaryTree(5)
+
+# 6-qubit scale-free network
+A = scaleFree(32)
 
 # initialize statevector, operators
 C = constructC(A)
 S = constructS(A)
 SC = S @ C
 
-initialState = np.zeros(64)
-active_nodes = 63
+initialState = np.zeros(32)
+active_nodes = 32
 
 for i in range(active_nodes):
     initialState[i] = 1/np.sqrt(active_nodes)
@@ -149,13 +168,13 @@ for item in range(len(finalStates)):
 # combine instantaneous ranks into final average rank
 # creates as many dictionary slots as we need
 counts = {}
-for i in range(2**6):
-    counts[bin(i)[2:].zfill(6)] = 0
+for i in range(2**5):
+    counts[bin(i)[2:].zfill(5)] = 0
 
 for item in probabilityList[50:]:
     for i in range(len(item)):
         # figures out the binary label that qiskit would return
-        binI = bin(i)[2:].zfill(7)[1:]
+        binI = bin(i)[2:].zfill(6)[1:]
         counts[binI] += item[i]
 
 plot_histogram(counts)

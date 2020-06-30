@@ -37,9 +37,11 @@ plt.matshow(np.real(C))
 S = Testing_Unitaries.constructS(A)
 s_gate = UnitaryGate(S)
 
-fig,ax = plt.subplots(1,2)
-ax[0].matshow(np.real(S))
-ax[1].matshow(np.imag(S))
+sc_gate = UnitaryGate(S @ C)
+
+testckt = QuantumCircuit(4,4)
+testckt.append(sc_gate, [0,1,2,3])
+testckt.decompose()
 
 # %% codecell
 # run circuit
@@ -84,8 +86,6 @@ for run in runs:
 # normalize & plot quantum rank
 plot_histogram(rank)
 
-import qiskit
-qiskit.__qiskit_version__
 # %% codecell
 ############################
 # DECOMPOSING UNITARY NOT WORKING
