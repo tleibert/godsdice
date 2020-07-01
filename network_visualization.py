@@ -49,3 +49,26 @@ def network_viz(A, rankmatrix, fps, fname):
     Writer = animation.writers['ffmpeg']
     writer = Writer(fps=fps)
     anim.save(fname, writer=writer)
+
+# %% codecell
+    
+    #Example animation:
+    
+A = np.array([  [0,1,0,0,1,1,0,0], #Defining adjacency matrix
+                 [0,0,0,0,0,0,0,0],
+                 [1,1,0,0,0,0,1,0],
+                 [0,0,1,0,1,1,0,0],
+                 [0,0,0,0,0,0,1,0],
+                 [0,0,0,1,0,0,0,0],
+                 [0,0,0,0,0,1,0,0],
+                 [0,0,0,0,0,0,0,0]])
+
+A=(A+A.T)>0 #Making sure A is symmetric (this makes it a non-directed graph)
+
+rmat = pageRankSim.beginsim(A,50) #creating a rankmatrix with graph A, 50 animation frames
+
+fps = 2 #setting fps
+
+fname = "7nodenondirect.mp4" #naming animation output file
+
+network_viz(A, rmat, fps, fname) #Calling visualization function to make the animation
