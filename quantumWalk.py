@@ -6,7 +6,6 @@ from qiskit import Aer, execute
 from qiskit.visualization import plot_histogram
 import numpy as np
 from numpy import pi
-import matplotlib.pyplot as plt
 
 # %% codecell
 # define gates
@@ -44,9 +43,7 @@ def step(n_qubits):
 
 n_qubits = 8 # THIS INCLUDES THE COIN - coin is the last qubit
 n_steps = 50 # number of timesteps
-
-# run on either 'statevector_simulator' or 'qasm_simulator'
-backend = 'statevector_simulator'
+p_measure = 1 # probability per time step for random measurement - leads to decoherence
 
 qc = QuantumCircuit(n_qubits, n_qubits-1)
 # start in the middle of the chain, coin in state i|up> + |down>
@@ -59,30 +56,28 @@ for i in range(n_steps):
     qc.h(-1)
     # take a step
     qc.append(step(n_qubits), [i for i in range(n_qubits)])
+    # randomly measure position to decohere to classical random walk
+    if np.random.random() < p_measure:
+        qc.append(qft(n_qubits-1).inverse(), [i for i in range(n_qubits-1)])
+        qc.measure([i for i in range(n_qubits-1)], [i for i in range(n_qubits-1)])
+        qc.append(qft(n_qubits-1), [i for i in range(n_qubits-1)])
+
 qc.append(qft(n_qubits-1).inverse(), [i for i in range(n_qubits-1)])
-if backend is 'qasm_simulator':
-    qc.measure([i for i in range(n_qubits-1)], [i for i in range(n_qubits-1)])
+qc.measure([i for i in range(n_qubits-1)], [i for i in range(n_qubits-1)])
 
 # %% codecell
 # Run the circuit
 
-simulator = Aer.get_backend(backend)
-job = execute(qc, simulator)
+simulator = Aer.get_backend('qasm_simulator')
+job = execute(qc, simulator, shots=5000)
 
 if backend is 'qasm_simulator':
     counts_ex = job.result().get_counts()
     # make the histogram include zeros
     counts = {}
-    for i in range(2**(n_qubits-1)):
-        key = bin(i)[2:].zfill(n_qubits-1)
+    for i in range(2**(n_qubits-2)):
+        key = bin(2*i)[2:].zfill(n_qubits-1)
         counts[key] = 0
     for key in counts_ex.keys():
         counts[key] = counts_ex[key]
     plot_histogram(counts, bar_labels=False)
-
-if backend is 'statevector_simulator':
-    psi_final = job.result().get_statevector()
-    # combine probability of x & heads with x & tails
-    prob_final = [np.abs(psi_final[i])**2 + np.abs(psi_final[i + 2**(n_qubits-1)])**2
-     for i in range(2**(n_qubits-1))]
-    plt.plot(np.arange(2**(n_qubits-1)) - 2**(n_qubits-2), prob_final)
