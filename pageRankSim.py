@@ -114,10 +114,10 @@ def simulate(A, init_vector, n_runs, shots, n_states):
         for key in counts_run.keys():
             rank[key] += counts_run[key]
 
-        rankdata = list(rank.items())
-        rankvect = np.array(rankdata)[:,1]
-        rankvectint = [int(i) for i in rankvect]
-        rankvectintnorm = [i/np.sum(rankvectint) for i in rankvectint]
+    rankdata = list(rank.items())
+    rankvect = np.array(rankdata)[:,1]
+    rankvectint = [int(i) for i in rankvect]
+    rankvectintnorm = [i/np.sum(rankvectint) for i in rankvectint]
 
     return rankvectintnorm
     # normalize & plot quantum rank
