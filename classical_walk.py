@@ -1,5 +1,6 @@
 import numpy as np
 
+"""
 def connected_node_mask(A):
     node_mask = [] # true for connected nodes, false for disconnected nodes
     for i in range(A.shape[0]):
@@ -8,8 +9,16 @@ def connected_node_mask(A):
         else:
             node_mask.append(True)
     return node_mask
+"""
 
-def cwalk(A, N):
+# N is the number of steps, R is the number of times we repeat the experiment with N steps
+def cwalk(N, R):
+    # each row corresponds to a trial R
+    coin_flips = np.random.randint(0,2,(R,N))
+    coin_flips[ coin_flips == 0 ] == -1 # set all 0's to -1's
+    return np.sum(coin_flips,axis=1)
+
+    """
     connected_nodes = A[connected_node_mask(A)]
     counts = np.zeros( len(connected_nodes) )
 
@@ -23,3 +32,4 @@ def cwalk(A, N):
 
     ranks = counts / np.sum(counts)
     return ranks
+    """
