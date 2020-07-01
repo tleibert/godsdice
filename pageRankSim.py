@@ -13,23 +13,14 @@ import Testing_Unitaries
 ######################
 
 # %% codecell
-# create the operators
 
-# input adjacency matrix
-A = np.array([  [0,1,0,0,1,1,0,0],
-                [0,0,0,0,0,0,0,0],
-                [1,1,0,0,0,0,1,0],
-                [0,0,1,0,1,1,0,0],
-                [0,0,0,0,0,0,1,0],
-                [0,0,0,1,0,0,0,0],
-                [0,0,0,0,0,1,0,0],
-                [0,0,0,0,0,0,0,0]])
 
-# initialize to superposition without |up>|111> or |down>|111>
-init_vector = np.ones(16)/np.sqrt(14)
-init_vector[7] = init_vector[15] = 0
+    # %% codecell
+    # run circuit
 
-def calc_rank(A, init_vector, n_runs, shots)
+    # initialize to superposition without |up>|111> or |down>|111>
+def simulate(A, init_vector, n_runs, shots):
+
     # number of qubits needed for graph
     n_qubits = int(np.log2(A.shape[0]))
 
@@ -40,8 +31,7 @@ def calc_rank(A, init_vector, n_runs, shots)
     S = Testing_Unitaries.constructS(A)
     s_gate = UnitaryGate(S)
 
-    # %% codecell
-    # run circuit
+
 
     # run the circuits for many timesteps and average the results
     # the paper started at 50 and ran up to 200-500, depending on the size of the
@@ -76,7 +66,12 @@ def calc_rank(A, init_vector, n_runs, shots)
         for key in counts_run.keys():
             rank[key] += counts_run[key]
 
-    return rank
+        rankdata = list(rank.items())
+        rankvect = np.array(rankdata)[:,1]
+        rankvectint = [int(i) for i in rankvect]
+        rankvectintnorm = [i/np.sum(rankvectint) for i in rankvectint]
+
+    return rankvectintnorm
     # normalize & plot quantum rank
     #plot_histogram(rank)
 
