@@ -122,26 +122,3 @@ def simulate(A, init_vector, n_runs, shots, n_states):
     return rankvectintnorm
     # normalize & plot quantum rank
     #plot_histogram(rank)
-
-# %% codecell
-############################
-# DECOMPOSING UNITARY NOT WORKING
-############################
-#
-# decomp = QuantumCircuit(4,3)
-# decomp.append(c_gate.definition, [0,1,2,3])
-# decomp.append(s_gate.definition, [0,1,2,3])
-# decomp.decompose().draw(output='mpl')
-
-# # %% codecell
-########################
-# I don't think this block works, but it may be useful later
-# Makes a subcircuit out of a UnitaryGate
-########################
-
-# # make a circuit with this gate
-#
-# testckt=unit_gate.definition
-# testckt.name = 'test'
-# testckt.draw(output='text')
-########################
