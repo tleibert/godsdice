@@ -6,13 +6,12 @@ Created on Sat Jun 27 17:15:34 2020
 
 # %% codecell
 # imports
+
 import numpy as np
-import math
 import numpy.linalg as la
 import scipy.linalg as scila
 from numpy import kron
 from qiskit.visualization import plot_histogram
-import matplotlib.pyplot as plt
 
 # %% codecell
 # setup functions
@@ -74,26 +73,6 @@ def constructS(M):
 
     return S
 
-def returnU(M):
-    # Force input matrix to already have dimensions as a power of 2
-    if not np.isclose(np.log2(M.shape[0]), int(np.log2(M.shape[0]))):
-        print("Please pad your adjacency matrix so its dimensions are a power of 2")
-
-    up_proj = np.diag([1,0])
-    down_proj = np.diag([0,1])
-
-    P,D,Q = la.svd(M)
-    U = P @ scila.expm(1j*np.diag(D)) @ Q
-    return U
-
-def manualSVD(M):
-    leftMatrix = M @ M.conjugate()
-    rightMatrix = M.conjugate() @ M
-    rightEigVal, rightEigVec = scila.eig(rightMatrix,None, False, True)
-    # is this right? with M instead of leftMatrix
-    leftEigVal, leftEigVec = scila.eig(M,None, True, False)
-    return(leftEigVec,leftEigVal,rightEigVal,rightEigVec)
-
 # adjacency matrix for binary trees
 def binaryTree(levels):
     n_nodes = 2**(levels+1)
@@ -134,7 +113,6 @@ A = np.array([  [0,1,0,0,1,1,1,0],
                 [0,0,0,0,0,0,0,0]])
 
 # 5-level binary tree
-
 # A = binaryTree(5)
 
 # 6-qubit scale-free network

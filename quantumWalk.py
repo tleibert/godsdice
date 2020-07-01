@@ -1,18 +1,17 @@
 # %% codecell
 # initialize
-from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit
+
+from qiskit import QuantumCircuit
 from qiskit import Aer, execute
-from qiskit.extensions import UnitaryGate
 from qiskit.visualization import plot_histogram
 import numpy as np
 from numpy import pi
 import matplotlib.pyplot as plt
-import scipy.linalg as la
 
 # %% codecell
 # define gates
 def qft(n_qubits):
-
+    # using quantum fourier transform to implement multiple steps
     qc = QuantumCircuit(n_qubits, name='QFT')
 
     for i in range(n_qubits):
@@ -35,32 +34,10 @@ def step(n_qubits):
     theta = 2*pi/(2**(n_qubits-1))
 
     for i in range(n_qubits-1):
-        qc.rz(-(2**i)*theta, n_qubits-i-2)
-        qc.crz(2*(2**i)*theta, n_qubits-1, n_qubits-i-2)
-    # fudge phase factor
-    # qc.rz(theta, -1)
+        qc.rz(-(2**i)*theta, -i-2)
+        qc.crz(2*(2**i)*theta, -1, -i-2)
 
     return qc
-
-# step written out with matrix multiplication instead of QFT
-def adder_step(n_qubits):
-
-    add_mat = np.zeros([2**(n_qubits-1),2**(n_qubits-1)])
-    add_mat[0,-1] = 1
-    for i in range(2**(n_qubits-1)-1):
-        add_mat[i+1,i]=1
-
-    sub_mat = np.zeros([2**(n_qubits-1),2**(n_qubits-1)])
-    sub_mat[-1,0] = 1
-    for i in range(2**(n_qubits-1)-1):
-        sub_mat[i,i+1]=1
-
-    up_proj = np.diag([1,0])
-    down_proj = np.diag([0,1])
-
-    step = np.kron(down_proj,add_mat) + np.kron(up_proj,sub_mat)
-
-    return UnitaryGate(step)
 
 # %% codecell
 # Quantum Walk circuit
@@ -68,11 +45,11 @@ def adder_step(n_qubits):
 n_qubits = 8 # THIS INCLUDES THE COIN - coin is the last qubit
 n_steps = 50 # number of timesteps
 
-# pick either 'statevector_simulator' or 'qasm_simulator'
+# run on either 'statevector_simulator' or 'qasm_simulator'
 backend = 'statevector_simulator'
 
 qc = QuantumCircuit(n_qubits, n_qubits-1)
-# start in the middle of the chain, coin heads up
+# start in the middle of the chain, coin in state i|up> + |down>
 qc.x(-2)
 qc.u2(3*pi/2,pi/2,-1)
 
@@ -85,6 +62,9 @@ for i in range(n_steps):
 qc.append(qft(n_qubits-1).inverse(), [i for i in range(n_qubits-1)])
 if backend is 'qasm_simulator':
     qc.measure([i for i in range(n_qubits-1)], [i for i in range(n_qubits-1)])
+
+# %% codecell
+# Run the circuit
 
 simulator = Aer.get_backend(backend)
 job = execute(qc, simulator)
@@ -106,6 +86,3 @@ if backend is 'statevector_simulator':
     prob_final = [np.abs(psi_final[i])**2 + np.abs(psi_final[i + 2**(n_qubits-1)])**2
      for i in range(2**(n_qubits-1))]
     plt.plot(np.arange(2**(n_qubits-1)) - 2**(n_qubits-2), prob_final)
-
-    plt.matshow(np.real(np.diag(psi_final)))
-    plt.matshow(np.imag(np.diag(psi_final)))

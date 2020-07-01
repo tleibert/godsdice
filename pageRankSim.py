@@ -1,15 +1,14 @@
 # %% codecell
 # initialize
-from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit
+from qiskit import QuantumCircuit
 from qiskit import Aer, execute
 from qiskit.extensions import UnitaryGate
 from qiskit.visualization import plot_histogram
 import numpy as np
-import matplotlib.pyplot as plt
 import scipy.linalg as la
-import Testing_Unitaries
+import unitary_methods
 ######################
-# MAKE SURE Testing_Unitaries IS UP TO DATE!
+# MAKE SURE unitary_methods IS UP TO DATE!
 ######################
 
 # %% codecell
@@ -29,10 +28,10 @@ A = np.array([  [0,1,0,0,1,1,0,0],
 n_qubits = int(np.log2(A.shape[0]))
 
 # make C and S operators
-C = Testing_Unitaries.constructC(A)
+C = unitary_methods.constructC(A)
 c_gate = UnitaryGate(C)
 
-S = Testing_Unitaries.constructS(A)
+S = unitary_methods.constructS(A)
 s_gate = UnitaryGate(S)
 
 sc_gate = UnitaryGate(S @ C)

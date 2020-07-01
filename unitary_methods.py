@@ -7,8 +7,8 @@ Created on Sat Jun 27 17:15:34 2020
 
 # %% codecell
 # imports
+
 import numpy as np
-import math
 import numpy.linalg as la
 import scipy.linalg as scila
 from numpy import kron
