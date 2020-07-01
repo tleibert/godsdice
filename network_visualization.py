@@ -78,12 +78,12 @@ def update_nx(row, data):
     for k in pos.keys():
         #print(k)
         ax.text( pos[k][0] + 0.05, pos[k][1] + 0.05, int(k) + 1 )
-    nx.draw_networkx(G, pos=pos, ax=ax, cmap=plt.cm.plasma, node_color=data[row,:], with_labels=False)
+    nx.draw_networkx(G, pos=pos, ax=ax, cmap="gray", node_color=data[row,:], with_labels=False)
     plt.axis('off')
 
 update_nx(0, rankmatrix) # initialization
 
-sm = plt.cm.ScalarMappable(cmap=plt.cm.plasma, norm=plt.Normalize(vmin=np.min(rankmatrix), vmax=np.max(rankmatrix)))
+sm = plt.cm.ScalarMappable(cmap="gray", norm=plt.Normalize(vmin=np.min(rankmatrix), vmax=np.max(rankmatrix)))
 plt.colorbar(sm, ax=ax)
 
 anim = animation.FuncAnimation(fig, update_nx, rankmatrix.shape[0], fargs=(rankmatrix, ))
