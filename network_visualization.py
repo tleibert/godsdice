@@ -77,9 +77,15 @@ def update_nx(row, data):
     #print(pos)
     for k in pos.keys():
         #print(k)
-        ax.text( pos[k][0] + 0.05, pos[k][1] + 0.05, int(k) + 1 )
+        x = pos[k][0]
+        y = pos[k][1]
+        circ = plt.Circle( ( x, y ), 0.1, fill=False, edgecolor="black" )
+        ax.add_artist(circ)
+
+        ax.text( x + 0.05, y + 0.05, int(k) + 1 )
+    #ax.axis("equal")
     nx.draw_networkx(G, pos=pos, ax=ax, cmap="gray", node_color=data[row,:], with_labels=False)
-    plt.axis('off')
+    ax.axis('off')
 
 update_nx(0, rankmatrix) # initialization
 
