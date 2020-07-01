@@ -1,14 +1,5 @@
 import numpy as np
 
-A = np.array([  [0,1,0,0,1,1,0,0],
-                [0,0,0,0,0,0,0,0],
-                [1,1,0,0,0,0,1,0],
-                [0,0,1,0,1,1,0,0],
-                [0,0,0,0,0,0,1,0],
-                [0,0,0,1,0,0,0,0],
-                [0,0,0,0,0,1,0,0],
-                [0,0,0,0,0,0,0,0]])
-
 def connected_node_mask(A):
     node_mask = [] # true for connected nodes, false for disconnected nodes
     for i in range(A.shape[0]):
@@ -32,5 +23,3 @@ def cwalk(A, N):
 
     ranks = counts / np.sum(counts)
     return ranks
-
-cwalk(A,1000)
