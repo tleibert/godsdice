@@ -1,21 +1,12 @@
-from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit
-from qiskit import Aer, execute
-from qiskit.extensions import UnitaryGate
-from qiskit.visualization import plot_histogram
 import numpy as np
 import matplotlib.pyplot as plt
-import scipy.linalg as la
-import pageRankSim
 import matplotlib.animation as animation
-
 import networkx as nx
-######################
-# MAKE SURE Testing_Unitaries IS UP TO DATE!
-######################
 
-# %% codecell
-# create the operators
+import pageRankSim
 
+# Some example run code for pageRankSim below
+"""
 #initialize run conditions
 n_runs = 10 # number of runs in final iteration
 shots = 50 # number of shots on IBM qasm simulator
@@ -31,13 +22,6 @@ A = np.array([  [0,1,0,0,1,1,0,0],
                 [0,0,0,1,0,0,0,0],
                 [0,0,0,0,0,1,0,0],
                 [0,0,0,0,0,0,0,0]])
-
-node_mask = [] # true for connected nodes, false for disconnected nodes
-for i in range(A.shape[0]):
-    if False not in np.equal( A[i,:], np.zeros(A.shape[0]) ) and False not in np.equal( A[:,i], np.zeros(A.shape[0]) ):
-        node_mask.append(False)
-    else:
-        node_mask.append(True)
 
 # for graph node 8 disconnected : index = 7
 disc_indices = [7]
@@ -64,35 +48,49 @@ rankmatrix=np.zeros((n_frames,n_states))
 for i in range(1,n_frames+1,1):
     rankrow = pageRankSim.simulate(A,init_vector,int((n_runs/n_frames)*i),shots)
     rankmatrix[i-1,:]=rankrow
+"""
 
-G = nx.from_numpy_matrix( A[node_mask][:,node_mask] )
+def connected_node_mask(A):
+    node_mask = [] # true for connected nodes, false for disconnected nodes
+    for i in range(A.shape[0]):
+        if False not in np.equal( A[i,:], np.zeros(A.shape[0]) ) and False not in np.equal( A[:,i], np.zeros(A.shape[0]) ):
+            node_mask.append(False)
+        else:
+            node_mask.append(True)
+    return node_mask
 
-fig, ax = plt.subplots()
+# fname should be .mp4!
+def network_viz(A, rankmatrix, fname):
+    node_mask = connected_node_mask(A)
 
-pos=nx.circular_layout(G)
+    G = nx.from_numpy_matrix( A[node_mask][:,node_mask] )
 
-def update_nx(row, data):
-    ax.cla()
-    #print(pos)
-    for k in pos.keys():
-        #print(k)
-        x = pos[k][0]
-        y = pos[k][1]
-        circ = plt.Circle( ( x, y ), 0.095, fill=False, edgecolor="black" )
-        ax.add_artist(circ)
+    fig, ax = plt.subplots()
 
-        ax.text( x + 0.05, y + 0.05, int(k) + 1 )
-    ax.axis("equal")
-    nx.draw_networkx(G, pos=pos, ax=ax, cmap="gray", node_color=data[row,:], with_labels=False)
-    ax.axis('off')
+    pos=nx.circular_layout(G)
 
-update_nx(0, rankmatrix) # initialization
+    def update_nx(row, data):
+        ax.cla()
+        #print(pos)
+        for k in pos.keys():
+            #print(k)
+            x = pos[k][0]
+            y = pos[k][1]
+            circ = plt.Circle( ( x, y ), 0.095, fill=False, edgecolor="black" )
+            ax.add_artist(circ)
 
-sm = plt.cm.ScalarMappable(cmap="gray", norm=plt.Normalize(vmin=np.min(rankmatrix), vmax=np.max(rankmatrix)))
-plt.colorbar(sm, ax=ax)
+            ax.text( x + 0.05, y + 0.05, int(k) + 1 )
+        ax.axis("equal")
+        nx.draw_networkx(G, pos=pos, ax=ax, cmap="gray", node_color=data[row,:], with_labels=False)
+        ax.axis('off')
 
-anim = animation.FuncAnimation(fig, update_nx, rankmatrix.shape[0], fargs=(rankmatrix, ))
+    update_nx(0, rankmatrix) # initialization
 
-Writer = animation.writers['ffmpeg']
-writer = Writer(fps=1)
-anim.save('graph.mp4', writer=writer)
+    sm = plt.cm.ScalarMappable(cmap="gray", norm=plt.Normalize(vmin=np.min(rankmatrix), vmax=np.max(rankmatrix)))
+    plt.colorbar(sm, ax=ax)
+
+    anim = animation.FuncAnimation(fig, update_nx, rankmatrix.shape[0], fargs=(rankmatrix, ))
+
+    Writer = animation.writers['ffmpeg']
+    writer = Writer(fps=1)
+    anim.save(fname, writer=writer)

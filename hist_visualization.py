@@ -1,23 +1,11 @@
-# -*- coding: utf-8 -*-
-
-# %% codecell
-# initialize
-from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit
-from qiskit import Aer, execute
-from qiskit.extensions import UnitaryGate
-from qiskit.visualization import plot_histogram
 import numpy as np
 import matplotlib.pyplot as plt
-import scipy.linalg as la
-import pageRankSim
 import matplotlib.animation as animation
-######################
-# MAKE SURE Testing_Unitaries IS UP TO DATE!
-######################
 
-# %% codecell
-# create the operators
+import pageRankSim
 
+# Some example run code for pageRankSim
+"""
 #initialize run conditions
 n_runs = 10 # number of runs in final iteration
 shots = 50 # number of shots on IBM qasm simulator
@@ -61,27 +49,29 @@ rankmatrix=np.zeros((n_frames,n_states))
 for i in range(1,n_frames+1,1):
     rankrow = pageRankSim.simulate(A,init_vector,int((n_runs/n_frames)*i),shots)
     rankmatrix[i-1,:]=rankrow
+"""
 
-fig, ax = plt.subplots()
+# fname should be .mp4!
+def hist_viz(rankmatrix, fname)
+    fig, ax = plt.subplots()
 
+    xpos = np.arange(1,rankmatrix[0].shape[0]+1)
+    ax.set_xticks( xpos, [ str(x) for x in xpos ]) # name them 1 - 7
 
-xpos = np.arange(1,rankmatrix[0].shape[0]+1)
-ax.set_xticks( xpos, [ str(x) for x in xpos ]) # name them 1 - 7
+    hist_ylim = np.min([ np.around(np.max(rankmatrix), decimals=1) + 0.05, 1.0 ])
 
-hist_ylim = np.min([ np.around(np.max(rankmatrix), decimals=1) + 0.05, 1.0 ])
+    # animation
+    def update_hist(row, data):
+        ax.clear()
+        ax.set_ylim(0, hist_ylim )
+        ax.bar(xpos, data[row,:])
+        for x in xpos:
+            ax.text( x - 0.325, data[row,x-1] + 0.005, "%.3f" % data[row,x-1] )
 
-# animation
-def update_hist(row, data):
-    ax.clear()
-    ax.set_ylim(0, hist_ylim )
-    ax.bar(xpos, data[row,:])
-    for x in xpos:
-        ax.text( x - 0.325, data[row,x-1] + 0.005, "%.3f" % data[row,x-1] )
+    update_hist(0, rankmatrix)
 
-ax.bar(xpos, rankmatrix[0,:])
+    anim = animation.FuncAnimation(fig, update_hist, rankmatrix.shape[0], fargs=(rankmatrix, ) )
 
-anim = animation.FuncAnimation(fig, update_hist, rankmatrix.shape[0], fargs=(rankmatrix, ) )
-
-Writer = animation.writers['ffmpeg']
-writer = Writer(fps=1)
-anim.save('hist.mp4', writer=writer)
+    Writer = animation.writers['ffmpeg']
+    writer = Writer(fps=1)
+    anim.save(fname, writer=writer)
