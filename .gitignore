@@ -3,3 +3,5 @@
 
 # for cleanliness
 __pycache__/
+
+.vscode/
