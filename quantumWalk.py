@@ -65,8 +65,8 @@ def adder_step(n_qubits):
 # %% codecell
 # Quantum Walk circuit
 
-n_qubits = 5 # THIS INCLUDES THE COIN - coin is the last qubit
-n_steps = 3 # number of timesteps
+n_qubits = 8 # THIS INCLUDES THE COIN - coin is the last qubit
+n_steps = 50 # number of timesteps
 
 # pick either 'statevector_simulator' or 'qasm_simulator'
 backend = 'statevector_simulator'
@@ -74,23 +74,17 @@ backend = 'statevector_simulator'
 qc = QuantumCircuit(n_qubits, n_qubits-1)
 # start in the middle of the chain, coin heads up
 qc.x(-2)
+qc.u2(3*pi/2,pi/2,-1)
 
 qc.append(qft(n_qubits-1), [i for i in range(n_qubits-1)])
 for i in range(n_steps):
     # flip the coin
-    qc.u2(pi/2,3*pi/2, -1)
+    qc.h(-1)
     # take a step
     qc.append(step(n_qubits), [i for i in range(n_qubits)])
 qc.append(qft(n_qubits-1).inverse(), [i for i in range(n_qubits-1)])
 if backend is 'qasm_simulator':
     qc.measure([i for i in range(n_qubits-1)], [i for i in range(n_qubits-1)])
-
-# for i in range(n_steps):
-#     qc.h(-1)
-#     qc.append(adder_step(n_qubits), [i for i in range(n_qubits)])
-
-# %% codecell
-# execute the circuit & plot output
 
 simulator = Aer.get_backend(backend)
 job = execute(qc, simulator)
@@ -113,5 +107,5 @@ if backend is 'statevector_simulator':
      for i in range(2**(n_qubits-1))]
     plt.plot(np.arange(2**(n_qubits-1)) - 2**(n_qubits-2), prob_final)
 
-    # plt.matshow(np.real(np.diag(psi_final)))
-    # plt.matshow(np.imag(np.diag(psi_final)))
+    plt.matshow(np.real(np.diag(psi_final)))
+    plt.matshow(np.imag(np.diag(psi_final)))

@@ -32,16 +32,10 @@ n_qubits = int(np.log2(A.shape[0]))
 C = Testing_Unitaries.constructC(A)
 c_gate = UnitaryGate(C)
 
-plt.matshow(np.real(C))
-
 S = Testing_Unitaries.constructS(A)
 s_gate = UnitaryGate(S)
 
 sc_gate = UnitaryGate(S @ C)
-
-testckt = QuantumCircuit(4,4)
-testckt.append(sc_gate, [0,1,2,3])
-testckt.decompose()
 
 # %% codecell
 # run circuit
@@ -76,7 +70,7 @@ for run in runs:
 
     # run circuit and store output probabilities
     simulator = Aer.get_backend("qasm_simulator")
-    job = execute(qc, simulator, shots=5000)
+    job = execute(qc, simulator, shots=1000)
     result = job.result()
     counts_run = result.get_counts(qc)
     # add up probabilities for all runs
