@@ -102,21 +102,3 @@ def scaleFree(nodes):
             if np.random.random() < probs[join]:
                 adj_mat[node, join] = 1
     return adj_mat
-
-# # %% codecell
-# #For the test case:
-# A = np.array([  [0,1,0,0,1,1,0,0],
-#                 [0,0,0,0,0,0,0,0],
-#                 [1,1,0,0,0,0,1,0],
-#                 [0,0,1,0,1,1,0,0],
-#                 [0,0,0,0,0,0,1,0],
-#                 [0,0,0,1,0,0,0,0],
-#                 [0,0,0,0,0,1,0,0],
-#                 [0,0,0,0,0,0,0,0]])
-# #Finding C
-# C = constructC(A)
-# C = np.matrix(C)
-#
-# S = constructS(A)
-# S = np.matrix(S)
-#
