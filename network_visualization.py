@@ -70,7 +70,6 @@ G = nx.from_numpy_matrix( A[node_mask][:,node_mask] )
 fig, ax = plt.subplots()
 
 pos=nx.circular_layout(G)
-#fig.clear()
 
 def update_nx(row, data):
     ax.cla()
