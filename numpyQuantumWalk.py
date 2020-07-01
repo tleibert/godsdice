@@ -31,23 +31,24 @@ def step(n_qubits):
     up_proj = np.diag([1,0])
     down_proj = np.diag([0,1])
 
-    step = np.kron(down_proj,add_mat) + np.kron(up_proj,sub_mat)
+    step = np.kron(down_proj,add_mat) - np.kron(up_proj,sub_mat)
 
     return step
 
 # %% codecell
 # run circuit
 
-n_qubits = 5 # INCLUDES COIN
-n_steps = 3 # number of timesteps
+n_qubits = 8 # INCLUDES COIN
+n_steps = 50 # number of timesteps
 
 C = coin(n_qubits)
 S = step(n_qubits)
 SC = S @ C
 
-psi_init = np.zeros(2**n_qubits)
+psi_init = np.array([0j for i in range(2**n_qubits)])
 # start in the middle of the line
-psi_init[2**(n_qubits-2)] = 1
+psi_init[2**(n_qubits-2)] = 1j/np.sqrt(2)
+psi_init[2**(n_qubits-2) + 2**(n_qubits-1)] = 1/np.sqrt(2)
 
 psi_list = [SC @ psi_init]
 
