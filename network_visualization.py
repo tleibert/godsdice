@@ -79,11 +79,11 @@ def update_nx(row, data):
         #print(k)
         x = pos[k][0]
         y = pos[k][1]
-        circ = plt.Circle( ( x, y ), 0.1, fill=False, edgecolor="black" )
+        circ = plt.Circle( ( x, y ), 0.095, fill=False, edgecolor="black" )
         ax.add_artist(circ)
 
         ax.text( x + 0.05, y + 0.05, int(k) + 1 )
-    #ax.axis("equal")
+    ax.axis("equal")
     nx.draw_networkx(G, pos=pos, ax=ax, cmap="gray", node_color=data[row,:], with_labels=False)
     ax.axis('off')
 
