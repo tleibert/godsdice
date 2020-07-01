@@ -41,43 +41,46 @@ def step(n_qubits):
 # %% codecell
 # Quantum Walk circuit
 
-n_qubits = 8 # THIS INCLUDES THE COIN - coin is the last qubit
-n_steps = 50 # number of timesteps
-p_measure = 1 # probability per time step for random measurement - leads to decoherence
+def quantumWalk(n_qubits, n_steps, p_measure):
 
-qc = QuantumCircuit(n_qubits, n_qubits-1)
-# start in the middle of the chain, coin in state i|up> + |down>
-qc.x(-2)
-qc.u2(3*pi/2,pi/2,-1)
+    # N_QUBITS INCLUDES THE COIN - coin is the last qubit
+    # n_steps is number of timesteps in the walk
+    # p_measure is probability per time step for random measurement - leads to decoherence
 
-qc.append(qft(n_qubits-1), [i for i in range(n_qubits-1)])
-for i in range(n_steps):
-    # flip the coin
-    qc.h(-1)
-    # take a step
-    qc.append(step(n_qubits), [i for i in range(n_qubits)])
-    # randomly measure position to decohere to classical random walk
-    if np.random.random() < p_measure:
-        qc.append(qft(n_qubits-1).inverse(), [i for i in range(n_qubits-1)])
-        qc.measure([i for i in range(n_qubits-1)], [i for i in range(n_qubits-1)])
-        qc.append(qft(n_qubits-1), [i for i in range(n_qubits-1)])
+    qc = QuantumCircuit(n_qubits, n_qubits-1)
+    # start in the middle of the chain, coin in state i|up> + |down>
+    qc.x(-2)
+    qc.u2(3*pi/2,pi/2,-1)
 
-qc.append(qft(n_qubits-1).inverse(), [i for i in range(n_qubits-1)])
-qc.measure([i for i in range(n_qubits-1)], [i for i in range(n_qubits-1)])
+    qc.append(qft(n_qubits-1), [i for i in range(n_qubits-1)])
+    for i in range(n_steps):
+        # flip the coin
+        qc.h(-1)
+        # take a step
+        qc.append(step(n_qubits), [i for i in range(n_qubits)])
+        # randomly measure position to decohere to classical random walk
+        if np.random.random() < p_measure:
+            qc.append(qft(n_qubits-1).inverse(), [i for i in range(n_qubits-1)])
+            qc.measure([i for i in range(n_qubits-1)], [i for i in range(n_qubits-1)])
+            qc.append(qft(n_qubits-1), [i for i in range(n_qubits-1)])
 
-# %% codecell
-# Run the circuit
+    qc.append(qft(n_qubits-1).inverse(), [i for i in range(n_qubits-1)])
+    qc.measure([i for i in range(n_qubits-1)], [i for i in range(n_qubits-1)])
 
-simulator = Aer.get_backend('qasm_simulator')
-job = execute(qc, simulator, shots=5000)
+    # %% codecell
+    # Run the circuit
 
-if backend is 'qasm_simulator':
-    counts_ex = job.result().get_counts()
-    # make the histogram include zeros
-    counts = {}
-    for i in range(2**(n_qubits-2)):
-        key = bin(2*i)[2:].zfill(n_qubits-1)
-        counts[key] = 0
-    for key in counts_ex.keys():
-        counts[key] = counts_ex[key]
-    plot_histogram(counts, bar_labels=False)
+    simulator = Aer.get_backend('qasm_simulator')
+    job = execute(qc, simulator, shots=5000)
+
+    if backend is 'qasm_simulator':
+        counts_ex = job.result().get_counts()
+        # make the histogram include zeros
+        counts = {}
+        for i in range(2**(n_qubits-2)):
+            key = bin(2*i)[2:].zfill(n_qubits-1)
+            counts[key] = 0
+        for key in counts_ex.keys():
+            counts[key] = counts_ex[key]
+
+    return counts
