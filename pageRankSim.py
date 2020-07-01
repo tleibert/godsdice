@@ -61,6 +61,7 @@ def beginsim (A, n_frames):
     # run circuit
 
     # initialize to superposition without |up>|111> or |down>|111>
+    
 def simulate(A, init_vector, n_runs, shots, n_states):
 
     # number of qubits needed for graph
@@ -82,6 +83,7 @@ def simulate(A, init_vector, n_runs, shots, n_states):
 
     runs = [10*i + 50 for i in range(n_runs)]
     # all the probabilities are added up here to yield the quantum rank
+
     # creates as many dictionary slots as we need
     rank = {}
     for i in range(n_states):
@@ -116,6 +118,7 @@ def simulate(A, init_vector, n_runs, shots, n_states):
         rankvect = np.array(rankdata)[:,1]
         rankvectint = [int(i) for i in rankvect]
         rankvectintnorm = [i/np.sum(rankvectint) for i in rankvectint]
+
     return rankvectintnorm
     # normalize & plot quantum rank
     #plot_histogram(rank)
