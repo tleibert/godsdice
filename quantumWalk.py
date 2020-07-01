@@ -35,10 +35,10 @@ def step(n_qubits):
     theta = 2*pi/(2**(n_qubits-1))
 
     for i in range(n_qubits-1):
-        qc.rz((2**i)*theta, n_qubits-i-2)
-        qc.crz(-2*(2**i)*theta, n_qubits-1, n_qubits-i-2)
+        qc.rz(-(2**i)*theta, n_qubits-i-2)
+        qc.crz(2*(2**i)*theta, n_qubits-1, n_qubits-i-2)
     # fudge phase factor
-    qc.rz(theta, -1)
+    # qc.rz(theta, -1)
 
     return qc
 
@@ -58,15 +58,15 @@ def adder_step(n_qubits):
     up_proj = np.diag([1,0])
     down_proj = np.diag([0,1])
 
-    step = np.kron(up_proj,add_mat) + np.kron(down_proj,sub_mat)
+    step = np.kron(down_proj,add_mat) + np.kron(up_proj,sub_mat)
 
     return UnitaryGate(step)
 
 # %% codecell
 # Quantum Walk circuit
 
-n_qubits = 7 # THIS INCLUDES THE COIN - coin is the last qubit
-n_steps = 25 # number of timesteps
+n_qubits = 5 # THIS INCLUDES THE COIN - coin is the last qubit
+n_steps = 3 # number of timesteps
 
 # pick either 'statevector_simulator' or 'qasm_simulator'
 backend = 'statevector_simulator'
@@ -78,7 +78,7 @@ qc.x(-2)
 qc.append(qft(n_qubits-1), [i for i in range(n_qubits-1)])
 for i in range(n_steps):
     # flip the coin
-    qc.h(-1)
+    qc.u2(pi/2,3*pi/2, -1)
     # take a step
     qc.append(step(n_qubits), [i for i in range(n_qubits)])
 qc.append(qft(n_qubits-1).inverse(), [i for i in range(n_qubits-1)])
@@ -104,7 +104,7 @@ if backend is 'qasm_simulator':
         counts[key] = 0
     for key in counts_ex.keys():
         counts[key] = counts_ex[key]
-        plot_histogram(counts, bar_labels=False)
+    plot_histogram(counts, bar_labels=False)
 
 if backend is 'statevector_simulator':
     psi_final = job.result().get_statevector()
