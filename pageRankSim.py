@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import scipy.linalg as la
 import unitary_methods
 ######################
-# MAKE SURE Testing_Unitaries IS UP TO DATE!
+# MAKE SURE unitary_methods IS UP TO DATE!
 ######################
 
 # %% codecell
@@ -68,10 +68,10 @@ def simulate(A, init_vector, n_runs, shots, n_states):
     n_qubits = int(np.log2(A.shape[0]))
 
     # make C and S operators
-    C = Testing_Unitaries.constructC(A)
+    C = unitary_methods.constructC(A)
     c_gate = UnitaryGate(C)
 
-    S = Testing_Unitaries.constructS(A)
+    S = unitary_methods.constructS(A)
     s_gate = UnitaryGate(S)
 
 
