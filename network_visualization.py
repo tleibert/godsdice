@@ -60,7 +60,7 @@ def connected_node_mask(A):
     return node_mask
 
 # fname should be .mp4!
-def network_viz(A, rankmatrix, fname):
+def network_viz(A, rankmatrix, fps, fname):
     node_mask = connected_node_mask(A)
 
     G = nx.from_numpy_matrix( A[node_mask][:,node_mask] )
@@ -92,5 +92,5 @@ def network_viz(A, rankmatrix, fname):
     anim = animation.FuncAnimation(fig, update_nx, rankmatrix.shape[0], fargs=(rankmatrix, ))
 
     Writer = animation.writers['ffmpeg']
-    writer = Writer(fps=1)
+    writer = Writer(fps=fps)
     anim.save(fname, writer=writer)
