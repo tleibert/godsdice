@@ -7,7 +7,7 @@ from qiskit.visualization import plot_histogram
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.linalg as la
-import Testing_Unitaries
+import unitary_methods
 ######################
 # MAKE SURE Testing_Unitaries IS UP TO DATE!
 ######################
