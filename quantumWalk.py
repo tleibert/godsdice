@@ -41,7 +41,7 @@ def step(n_qubits):
 # %% codecell
 # Quantum Walk circuit
 
-def quantumWalk.py(n_qubits, n_steps, p_measure):
+def quantumWalk(n_qubits, n_steps, p_measure):
 
     # N_QUBITS INCLUDES THE COIN - coin is the last qubit
     # n_steps is number of timesteps in the walk
