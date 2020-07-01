@@ -52,7 +52,7 @@ for i in range(1,n_frames+1,1):
 """
 
 # fname should be .mp4!
-def hist_viz(rankmatrix, fps, fname)
+def hist_viz(rankmatrix, fps, fname):
     fig, ax = plt.subplots()
 
     xpos = np.arange(1,rankmatrix[0].shape[0]+1)
